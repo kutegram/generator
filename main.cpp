@@ -50,9 +50,14 @@ void generate(QString jsonPath, QString prefix, qint32 layer)
 
     header << "//Generated code." << endl;
     header << endl;
-    header << "#include <telegramstream.h>" << endl;
-    header << "#include <qt-json/json.h>" << endl;
+    header << "#include \"telegramstream.h\"" << endl;
     header << endl;
+
+    source << "//Generated code." << endl;
+    source << endl;
+    source << "#include \"" << prefix.toLower() << "schema.h\"" << endl;
+    source << endl;
+
     if (layer) {
         header << "#define API_LAYER " << QString::number(layer) << endl;
         header << endl;

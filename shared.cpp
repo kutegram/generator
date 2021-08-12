@@ -7,6 +7,7 @@ QStringList keywords = QStringList() << "conId" << "alignas" << "alignof" << "an
 QString prepareName(QString prefix, QString raw)
 {
     QString name = prefix;
+    raw = raw.replace("%", "");
     QStringList split = raw.split(" ", QString::SkipEmptyParts);
     split = split[0].split("_", QString::SkipEmptyParts);
     for (qint32 i = 0; i < split.size(); ++i) {
@@ -30,7 +31,7 @@ QString prepareName(QString prefix, QString raw)
     return name;
 }
 
-void writeVector(QTextStream &source, PARAM p, QString prefix)
+/* void writeVector(QTextStream &source, PARAM p, QString prefix)
 {
     QString type = p.type.split("?")[0];
     type.remove(0, 7);
@@ -93,131 +94,171 @@ void writeVector(QTextStream &source, PARAM p, QString prefix)
 
     source << "        ";
 
+    writeParam(source, p, prefix, varName + "[i]");
+} */
+
+void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QString replace)
+{
+    QString input = p.type.split("?")[0].toLower();
+    QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
+    if (!signature) source << "    ";
+    else source << "(void*) &";
     if (input == "#" || input == "int") {
-        source << "    stream << " << varName << "[i].toInt();" << endl;
+        source << "writeInt32";
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "uint") {
-        source << "    stream << " << varName << "[i].toUInt();" << endl;
+        source << "writeUInt32";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "long") {
-        source << "    stream << " << varName << "[i].toLongLong();" << endl;
+        source << "writeInt64";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "double") {
-        source << "    stream << " << varName << "[i].toDouble();" << endl;
+        source << "writeDouble";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "string") {
-        source << "    stream << " << varName << "[i].toString();" << endl;
+        source << "writeString";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "bytes") {
-        source << "    stream << " << varName << "[i].toByteArray();" << endl;
+        source << "writeByteArray";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "bool") {
-        source << "    stream << " << varName << "[i].toBool();" << endl;
+        source << "writeBool";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "int128") {
-        source << "    stream.writeInt128(" << varName << "[i].toByteArray());" << endl;
+        source << "writeInt128";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "int256") {
-        source << "    stream.writeInt256(" << varName << "[i].toByteArray());" << endl;
+        source << "writeInt256";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "!x" || input == "x" || input == "object") {
-        source << "    //Unsupported. (vector x, vector !x, vector object)" << endl;
+        if (signature) {
+            source << "0";
+            return;
+        }
+        source << "//Unsupported. (x, !x, object)" << endl;
     }
     else if (input == "httpwait") {
-        source << "    //Unsupported. (vector httpwait)" << endl;
+        if (signature) {
+            source << "0";
+            return;
+        }
+        source << "//Unsupported. (httpwait)" << endl;
     }
     else if (input.startsWith("vector<") && input.endsWith(">")) {
-        source << "    //Unsupported. (vector vector)" << endl;
+        //writeVector(source, p, prefix);
+        source << "writeVector";
+        if (signature) return;
+        source << "(stream, " << dest << ", ";
+        QString type = p.type.split("?")[0];
+        type.remove(0, 7);
+        type.chop(1);
+        PARAM param = {"item", type};
+        writeParam(source, param, prefix, true);
+        source << ");" << endl;
     }
     else {
-        source << "    write" << prepareName(prefix, type) << "(stream, " << varName << "[i].toMap());" << endl;
+        source << "write" << prepareName(prefix, p.type.split("?")[0]);
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
 }
 
-void writeParam(QTextStream& source, PARAM p, QString prefix)
+void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QString replace)
 {
     QString input = p.type.split("?")[0].toLower();
+    QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
+    if (!signature) source << "    ";
+    else source << "(void*) &";
     if (input == "#" || input == "int") {
-        source << "    stream << obj[\"" << p.name << "\"].toInt();" << endl;
+        source << "readInt32";
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "uint") {
-        source << "    stream << obj[\"" << p.name << "\"].toUInt();" << endl;
+        source << "readUInt32";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "long") {
-        source << "    stream << obj[\"" << p.name << "\"].toLongLong();" << endl;
+        source << "readInt64";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "double") {
-        source << "    stream << obj[\"" << p.name << "\"].toDouble();" << endl;
+        source << "readDouble";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "string") {
-        source << "    stream << obj[\"" << p.name << "\"].toString();" << endl;
+        source << "readString";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "bytes") {
-        source << "    stream << obj[\"" << p.name << "\"].toByteArray();" << endl;
+        source << "readByteArray";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "bool") {
-        source << "    stream << obj[\"" << p.name << "\"].toBool();" << endl;
+        source << "readBool";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "int128") {
-        source << "    stream.writeInt128(obj[\"" << p.name << "\"].toByteArray());" << endl;
+        source << "readInt128";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "int256") {
-        source << "    stream.writeInt256(obj[\"" << p.name << "\"].toByteArray());" << endl;
+        source << "readInt256";
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
     else if (input == "!x" || input == "x" || input == "object") {
-        source << "    //Unsupported. (x, !x, object)" << endl;
+        if (signature) {
+            source << "0";
+            return;
+        }
+        source << "//Unsupported. (x, !x, object)" << endl;
     }
     else if (input == "httpwait") {
-        source << "    //Unsupported. (httpwait)" << endl;
+        if (signature) {
+            source << "0";
+            return;
+        }
+        source << "//Unsupported. (httpwait)" << endl;
     }
     else if (input.startsWith("vector<") && input.endsWith(">")) {
-        writeVector(source, p, prefix);
+        //readVector(source, p, prefix);
+        source << "readVector";
+        if (signature) return;
+        source << "(stream, " << dest << ", ";
+        QString type = p.type.split("?")[0];
+        type.remove(0, 7);
+        type.chop(1);
+        PARAM param = {"item", type};
+        readParam(source, param, prefix, true);
+        source << ");" << endl;
     }
     else {
-        source << "    write" << prepareName(prefix, p.type.split("?")[0]) << "(stream, obj[\"" << p.name << "\"].toMap());" << endl;
-    }
-}
-
-void readParam(QTextStream &source, PARAM p, QString prefix)
-{
-    QString input = p.type.split("?")[0].toLower();
-    if (input == "#" || input == "int") {
-        source << "    stream >> obj[\"" << p.name << "\"].toInt();" << endl;
-    }
-    else if (input == "uint") {
-        source << "    stream >> obj[\"" << p.name << "\"].toUInt();" << endl;
-    }
-    else if (input == "long") {
-        source << "    stream >> obj[\"" << p.name << "\"].toLongLong();" << endl;
-    }
-    else if (input == "double") {
-        source << "    stream >> obj[\"" << p.name << "\"].toDouble();" << endl;
-    }
-    else if (input == "string") {
-        source << "    stream >> obj[\"" << p.name << "\"].toString();" << endl;
-    }
-    else if (input == "bytes") {
-        source << "    stream >> obj[\"" << p.name << "\"].toByteArray();" << endl;
-    }
-    else if (input == "bool") {
-        source << "    stream >> obj[\"" << p.name << "\"].toBool();" << endl;
-    }
-    else if (input == "int128") {
-        source << "    stream.readInt128(obj[\"" << p.name << "\"].toByteArray());" << endl;
-    }
-    else if (input == "int256") {
-        source << "    stream.readInt256(obj[\"" << p.name << "\"].toByteArray());" << endl;
-    }
-    else if (input == "!x" || input == "x" || input == "object") {
-        source << "    //Unsupported. (x, !x, object)" << endl;
-    }
-    else if (input == "httpwait") {
-        source << "    //Unsupported. (httpwait)" << endl;
-    }
-    else if (input.startsWith("vector<") && input.endsWith(">")) {
-        readVector(source, p, prefix);
-    }
-    else {
-        source << "    read" << prepareName(prefix, p.type.split("?")[0]) << "(stream, obj[\"" << p.name << "\"].toMap());" << endl;
+        source << "read" << prepareName(prefix, p.type.split("?")[0]);
+        if (signature) return;
+        source << "(stream, " << dest << ");" << endl;
     }
 }
