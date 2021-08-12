@@ -4,10 +4,10 @@
 
 void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m)
 {
-    header << "void read" << prepareName(prefix, m.method) << "(TelegramStream &stream, QVariant &i);" << endl;
-    header << "void write" << prepareName(prefix, m.method) << "(TelegramStream &stream, QVariant i);" << endl;
+    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i);" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i);" << endl;
 
-    source << "void read" << prepareName(prefix, m.method) << "(TelegramStream &stream, QVariant &i)" << endl;
+    source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i)" << endl;
     source << "{" << endl;
 
     //TODO: flags support
@@ -24,7 +24,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "}" << endl;
     source << endl;
 
-    source << "void write" << prepareName(prefix, m.method) << "(TelegramStream &stream, QVariant i)" << endl;
+    source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i)" << endl;
     source << "{" << endl;
 
     //TODO: flags support
