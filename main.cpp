@@ -22,7 +22,7 @@ void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
     }
 
     for (qint32 i = 0; i < schema.methods.size(); ++i) {
-        header << "    " << prepareName("", schema.methods[i].method) << " = " << QString::number(schema.methods[i].id) << "," << endl;
+        header << "    " << prepareName("", schema.methods[i].method) << "Method = " << QString::number(schema.methods[i].id) << "," << endl;
     }
 
     header << "};" << endl;
