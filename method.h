@@ -5,6 +5,6 @@
 
 #include <QTextStream>
 
-void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, QString interface);
+void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m);
 
 #endif // METHOD_H

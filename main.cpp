@@ -78,14 +78,11 @@ void generate(QString jsonPath, QString prefix, qint32 layer)
 
     header << endl;
 
-    interfaces.clear();
     for (qint32 i = 0; i < schema.methods.size(); ++i) {
-        if (!interfaces.contains(schema.methods[i].method)) interfaces.append(schema.methods[i].method);
+        writeMethod(header, source, schema, prefix, schema.methods[i]);
     }
 
-    for (qint32 i = 0; i < interfaces.size(); ++i) {
-        writeMethod(header, source, schema, prefix, interfaces[i]);
-    }
+    header << endl;
 
     header << "#endif //" << prefix.toUpper() << "SCHEMA_H" << endl;
     header << endl;
