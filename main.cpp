@@ -13,18 +13,20 @@ using namespace QtJson;
 
 void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
 {
-    header << "enum " << prefix << "Type" << endl;
+    header << "namespace " << prefix << "Type {" << endl;
+    header << "enum Types" << endl;
     header << "{" << endl;
 
     for (qint32 i = 0; i < schema.constructors.size(); ++i) {
-        header << "    " << prepareName(prefix, schema.constructors[i].predicate) << " = " << QString::number(schema.constructors[i].id) << "," << endl;
+        header << "    " << prepareName("", schema.constructors[i].predicate) << " = " << QString::number(schema.constructors[i].id) << "," << endl;
     }
 
     for (qint32 i = 0; i < schema.methods.size(); ++i) {
-        header << "    " << prepareName(prefix, schema.methods[i].method) << " = " << QString::number(schema.methods[i].id) << "," << endl;
+        header << "    " << prepareName("", schema.methods[i].method) << " = " << QString::number(schema.methods[i].id) << "," << endl;
     }
 
     header << "};" << endl;
+    header << "}" << endl;
     header << endl;
 }
 
