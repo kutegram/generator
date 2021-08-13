@@ -23,7 +23,7 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
     for (qint32 i = 0; i < predicts.size(); ++i) {
         CONSTRUCTOR c = predicts[i];
         source << "    case " << QString::number(c.id) << ":" << endl;
-        source << "        obj[\"id\"] = conId.toInt();" << endl;
+        source << "        obj[\"_\"] = conId.toInt();" << endl;
         for (qint32 j = 0; j < c.params.size(); ++j) {
             source << "    ";
             readParam(source, c.params[j], prefix);
@@ -41,11 +41,11 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
 
     //TODO: flags support
     source << "    TelegramObject obj = i.toMap();" << endl;
-    source << "    switch (obj[\"id\"].toInt()) {" << endl;
+    source << "    switch (obj[\"_\"].toInt()) {" << endl;
     for (qint32 i = 0; i < predicts.size(); ++i) {
         CONSTRUCTOR c = predicts[i];
         source << "    case " << QString::number(c.id) << ":" << endl;
-        PARAM id = {"id", "int"};
+        PARAM id = {"_", "int"};
         source << "    ";
         writeParam(source, id, prefix);
         for (qint32 j = 0; j < c.params.size(); ++j) {

@@ -15,7 +15,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "    readInt32(stream, conId, callback);" << endl;
     source << "    switch (conId.toInt()) {" << endl;
     source << "    case " << QString::number(m.id) << ":" << endl;
-    PARAM returnParam = {"conId", m.type};
+    PARAM returnParam = {"i", m.type};
     readParam(source, returnParam, prefix, false, "i");
     source << "    break;" << endl;
 
@@ -29,10 +29,10 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
 
     //TODO: flags support
     source << "    TelegramObject obj = i.toMap();" << endl;
-    source << "    switch (obj[\"id\"].toInt()) {" << endl;
+    source << "    switch (obj[\"_\"].toInt()) {" << endl;
 
     source << "    case " << QString::number(m.id) << ":" << endl;
-    PARAM id = {"id", "int"};
+    PARAM id = {"_", "int"};
     source << "    ";
     writeParam(source, id, prefix);
     for (qint32 j = 0; j < m.params.size(); ++j) {
