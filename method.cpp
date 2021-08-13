@@ -4,15 +4,15 @@
 
 void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m)
 {
-    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i);" << endl;
-    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i);" << endl;
+    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
 
-    source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i)" << endl;
+    source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
     //TODO: flags support
     source << "    QVariant conId;" << endl;
-    source << "    readInt32(stream, conId);" << endl;
+    source << "    readInt32(stream, conId, callback);" << endl;
     source << "    switch (conId.toInt()) {" << endl;
     source << "    case " << QString::number(m.id) << ":" << endl;
     PARAM returnParam = {"conId", m.type};
@@ -24,7 +24,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "}" << endl;
     source << endl;
 
-    source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i)" << endl;
+    source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void callback)" << endl;
     source << "{" << endl;
 
     //TODO: flags support

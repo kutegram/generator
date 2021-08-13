@@ -1,7 +1,7 @@
 #include "shared.h"
 
 QStringList flagTypes = QStringList() << "bool" << "qint32" << "quint32" << "qint64" << "double";
-QStringList keywords = QStringList() << "conId" << "alignas" << "alignof" << "and" << "and_eq" << "asm" << "atomic_cancel" << "atomic_commit" << "atomic_noexcept" << "auto" << "bitand" << "bitor" << "bool" << "break" << "case" << "catch" << "char" << "char8_t" << "char16_t" << "char32_t" << "class" << "compl" << "concept" << "const" << "consteval" << "constexpr" << "constinit" << "const_cast" << "continue" << "co_await" << "co_return" << "co_yield" << "decltype" << "default" << "delete" << "do" << "double" << "dynamic_cast" << "else" << "enum" << "explicit" << "export" << "extern" << "false" << "float" << "for" << "friend" << "goto" << "if" << "inline" << "int" << "long" << "mutable" << "namespace" << "new" << "noexcept" << "not" << "not_eq" << "nullptr" << "operator" << "or" << "or_eq" << "private" << "protected" << "public" << "reflexpr" << "register" << "reinterpret_cast" << "requires" << "return" << "short" << "signed" << "sizeof" << "static" << "static_assert" << "static_cast" << "struct" << "switch" << "synchronized" << "template" << "this" << "thread_local" << "throw" << "true" << "try" << "typedef" << "typeid" << "typename" << "union" << "unsigned" << "using" << "virtual" << "void" << "volatile" << "wchar_t" << "while" << "xor" << "xor_eq";
+QStringList keywords = QStringList() << "stream" << "i" << "callback" << "conId" << "alignas" << "alignof" << "and" << "and_eq" << "asm" << "atomic_cancel" << "atomic_commit" << "atomic_noexcept" << "auto" << "bitand" << "bitor" << "bool" << "break" << "case" << "catch" << "char" << "char8_t" << "char16_t" << "char32_t" << "class" << "compl" << "concept" << "const" << "consteval" << "constexpr" << "constinit" << "const_cast" << "continue" << "co_await" << "co_return" << "co_yield" << "decltype" << "default" << "delete" << "do" << "double" << "dynamic_cast" << "else" << "enum" << "explicit" << "export" << "extern" << "false" << "float" << "for" << "friend" << "goto" << "if" << "inline" << "int" << "long" << "mutable" << "namespace" << "new" << "noexcept" << "not" << "not_eq" << "nullptr" << "operator" << "or" << "or_eq" << "private" << "protected" << "public" << "reflexpr" << "register" << "reinterpret_cast" << "requires" << "return" << "short" << "signed" << "sizeof" << "static" << "static_assert" << "static_cast" << "struct" << "switch" << "synchronized" << "template" << "this" << "thread_local" << "throw" << "true" << "try" << "typedef" << "typeid" << "typename" << "union" << "unsigned" << "using" << "virtual" << "void" << "volatile" << "wchar_t" << "while" << "xor" << "xor_eq";
 #define VECTOR_ID "481674261"
 
 QString prepareName(QString prefix, QString raw)
@@ -105,47 +105,47 @@ void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QS
     else source << "(void*) &";
     if (input == "#" || input == "int") {
         source << "writeInt32";
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "uint") {
         source << "writeUInt32";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "long") {
         source << "writeInt64";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "double") {
         source << "writeDouble";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "string") {
         source << "writeString";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "bytes") {
         source << "writeByteArray";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "bool") {
         source << "writeBool";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "int128") {
         source << "writeInt128";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "int256") {
         source << "writeInt256";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "!x" || input == "x" || input == "object") {
         if (signature) {
@@ -176,7 +176,7 @@ void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QS
     else {
         source << "write" << prepareName(prefix, p.type.split("?")[0]);
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
 }
 
@@ -188,47 +188,47 @@ void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QSt
     else source << "(void*) &";
     if (input == "#" || input == "int") {
         source << "readInt32";
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "uint") {
         source << "readUInt32";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "long") {
         source << "readInt64";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "double") {
         source << "readDouble";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "string") {
         source << "readString";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "bytes") {
         source << "readByteArray";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "bool") {
         source << "readBool";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "int128") {
         source << "readInt128";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "int256") {
         source << "readInt256";
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "!x" || input == "x" || input == "object") {
         if (signature) {
@@ -259,6 +259,6 @@ void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QSt
     else {
         source << "read" << prepareName(prefix, p.type.split("?")[0]);
         if (signature) return;
-        source << "(stream, " << dest << ");" << endl;
+        source << "(stream, " << dest << ", callback);" << endl;
     }
 }

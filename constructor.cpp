@@ -4,21 +4,21 @@
 
 void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, QString interface)
 {
-    header << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i);" << endl;
-    header << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i);" << endl;
+    header << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+    header << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
 
     QList<CONSTRUCTOR> predicts;
     for (qint32 i = 0; i < schema.constructors.size(); ++i) {
         if (schema.constructors[i].type == interface) predicts.append(schema.constructors[i]);
     }
 
-    source << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i)" << endl;
+    source << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
     //TODO: flags support
     source << "    TelegramObject obj;" << endl;
     source << "    QVariant conId;" << endl;
-    source << "    readInt32(stream, conId);" << endl;
+    source << "    readInt32(stream, conId, callback);" << endl;
     source << "    switch (conId.toInt()) {" << endl;
     for (qint32 i = 0; i < predicts.size(); ++i) {
         CONSTRUCTOR c = predicts[i];
@@ -36,7 +36,7 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
     source << "}" << endl;
     source << endl;
 
-    source << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i)" << endl;
+    source << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     source << "{" << endl;
 
     //TODO: flags support
