@@ -31,83 +31,17 @@ QString prepareName(QString prefix, QString raw)
     return name;
 }
 
-/* void writeVector(QTextStream &source, PARAM p, QString prefix)
-{
-    QString type = p.type.split("?")[0];
-    type.remove(0, 7);
-    type.chop(1);
-    source << "    QList<";
-    QString input = type.toLower();
-
-    if (input == "#" || input == "int") {
-        source << "qint32";
-    }
-    else if (input == "uint") {
-        source << "quint32";
-    }
-    else if (input == "long") {
-        source << "qint64";
-    }
-    else if (input == "double") {
-        source << "double";
-    }
-    else if (input == "string") {
-        source << "QString";
-    }
-    else if (input == "bytes") {
-        source << "QByteArray";
-    }
-    else if (input == "bool") {
-        source << "bool";
-    }
-    else if (input == "int128") {
-        source << "QByteArray";
-    }
-    else if (input == "int256") {
-        source << "QByteArray";
-    }
-    else if (input == "!x" || input == "x" || input == "object") {
-        source << "//Unsupported. (vector x, vector !x, vector object)" << endl;
-    }
-    else if (input == "httpwait") {
-        source << "//Unsupported. (vector httpwait)" << endl;
-    }
-    else if (input.startsWith("vector<") && input.endsWith(">")) {
-        source << "//Unsupported. (vector vector)" << endl;
-    }
-    else {
-        source << prepareName(prefix, type);
-    }
-
-    QString varName = p.name;
-    if (keywords.contains(varName)) varName += "_var";
-
-    source << "> " << varName << " = obj[\"" << p.name << "\"].toList();" << endl;
-
-    //write vector header
-    source << "        stream << " << VECTOR_ID << ";" << endl;
-    source << "        stream << " << varName << ".size();" << endl;
-
-    //"for" cycle
-    source << "        for (qint32 i = 0; i < " << varName << "_var";
-    source << ".size(); ++i)" << endl;
-
-    source << "        ";
-
-    writeParam(source, p, prefix, varName + "[i]");
-} */
-
 void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QString replace)
 {
     QString input = p.type.split("?")[0].toLower();
     QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
     if (!signature) source << "    ";
     else source << "(void*) &";
-    if (input == "#" || input == "int") {
+    if (input == "int") {
         source << "writeInt32";
         source << "(stream, " << dest << ", callback);" << endl;
     }
-    else if (input == "uint") {
+    else if (input == "#" || input == "uint") {
         source << "writeUInt32";
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
@@ -186,11 +120,11 @@ void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QSt
     QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
     if (!signature) source << "    ";
     else source << "(void*) &";
-    if (input == "#" || input == "int") {
+    if (input == "int") {
         source << "readInt32";
         source << "(stream, " << dest << ", callback);" << endl;
     }
-    else if (input == "uint") {
+    else if (input == "#" || input == "uint") {
         source << "readUInt32";
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
