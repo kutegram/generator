@@ -116,7 +116,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
             source << "W";
             return;
         }
-        source << "(*W)(stream, " << dest << ", callback);" << endl;
+        source << "if (W) (*W)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "object") {
         if (signature) {
@@ -220,7 +220,7 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
             source << "R";
             return;
         }
-        source << "(*R)(stream, " << dest << ", callback);" << endl;
+        source << "if (R) (*R)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "object") {
         if (signature) {
