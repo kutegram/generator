@@ -2,14 +2,62 @@
 
 #include "shared.h"
 
-void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m)
+void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METHOD m)
 {
-    if (m.type == "X") header << "template <READ_METHOD R, WRITE_METHOD W> ";
+    header << "template <READ_METHOD R, WRITE_METHOD W> ";
     header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
-    if (m.type == "X") header << "template <READ_METHOD R, WRITE_METHOD W> ";
+    header << "template <READ_METHOD R, WRITE_METHOD W> ";
     header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
 
-    if (m.type == "X") source << "template <READ_METHOD R, WRITE_METHOD W> ";
+    header << "template <READ_METHOD R, WRITE_METHOD W> ";
+    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
+    header << "{" << endl;
+
+    header << "    QVariant conId;" << endl;
+    header << "    readInt32(stream, conId, callback);" << endl;
+    header << "    switch (conId.toInt()) {" << endl;
+    header << "    case " << QString::number(m.id) << ":" << endl;
+    PARAM returnParam = {"i", m.type};
+    readParam(header, m.params, returnParam, prefix, false, "i");
+    header << "    break;" << endl;
+
+    header << "    }" << endl;
+
+    header << "}" << endl;
+    header << endl;
+
+    header << "template <READ_METHOD R, WRITE_METHOD W> ";
+    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
+    header << "{" << endl;
+
+    header << "    TelegramObject obj = i.toMap();" << endl;
+    header << "    switch (obj[\"_\"].toInt()) {" << endl;
+
+    header << "    case " << QString::number(m.id) << ":" << endl;
+    PARAM id = {"_", "int"};
+    header << "    ";
+    writeParam(header, m.params, id, prefix);
+    for (qint32 j = 0; j < m.params.size(); ++j) {
+        if (m.params[j].type.split("?").last().toLower() != "true") header << "    ";
+        writeParam(header, m.params, m.params[j], prefix);
+    }
+    header << "    break;" << endl;
+
+    header << "    }" << endl;
+
+    header << "}" << endl;
+    header << endl;
+}
+
+void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m)
+{
+    if (m.type == "X") {
+        writeMethodHeader(header, schema, prefix, m);
+        return;
+    }
+    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
+
     source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
@@ -26,7 +74,6 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "}" << endl;
     source << endl;
 
-    if (m.type == "X") source << "template <READ_METHOD R, WRITE_METHOD W> ";
     source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     source << "{" << endl;
 
