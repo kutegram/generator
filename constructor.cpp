@@ -15,7 +15,6 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
     source << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
-    //TODO: flags support
     source << "    TelegramObject obj;" << endl;
     source << "    QVariant conId;" << endl;
     source << "    readInt32(stream, conId, callback);" << endl;
@@ -26,7 +25,7 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
         source << "        obj[\"_\"] = conId.toInt();" << endl;
         for (qint32 j = 0; j < c.params.size(); ++j) {
             source << "    ";
-            readParam(source, c.params[j], prefix);
+            readParam(source, c.params, c.params[j], prefix);
         }
         source << "    break;" << endl;
     }
@@ -39,7 +38,6 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
     source << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     source << "{" << endl;
 
-    //TODO: flags support
     source << "    TelegramObject obj = i.toMap();" << endl;
     source << "    switch (obj[\"_\"].toInt()) {" << endl;
     for (qint32 i = 0; i < predicts.size(); ++i) {
@@ -47,10 +45,10 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
         source << "    case " << QString::number(c.id) << ":" << endl;
         PARAM id = {"_", "int"};
         source << "    ";
-        writeParam(source, id, prefix);
+        writeParam(source, c.params, id, prefix);
         for (qint32 j = 0; j < c.params.size(); ++j) {
-            source << "    ";
-            writeParam(source, c.params[j], prefix);
+            if (c.params[j].type.split("?").last().toLower() != "true") source << "    ";
+            writeParam(source, c.params, c.params[j], prefix);
         }
         source << "    break;" << endl;
     }

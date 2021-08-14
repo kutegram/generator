@@ -7,8 +7,8 @@
 
 QString prepareName(QString prefix, QString raw);
 //void writeVector(QTextStream& source, PARAM p, QString prefix);
-void writeParam(QTextStream& source, PARAM p, QString prefix, bool signature = false, QString replace = QString());
+void writeParam(QTextStream& source, QList<PARAM> params, PARAM p, QString prefix, bool signature = false, QString replace = QString());
 //void readVector(QTextStream& source, PARAM p, QString prefix);
-void readParam(QTextStream& source, PARAM p, QString prefix, bool signature = false, QString replace = QString());
+void readParam(QTextStream& source, QList<PARAM> params, PARAM p, QString prefix, bool signature = false, QString replace = QString());
 
 #endif // SHARED_H

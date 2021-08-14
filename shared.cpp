@@ -4,6 +4,8 @@ QStringList flagTypes = QStringList() << "bool" << "qint32" << "quint32" << "qin
 QStringList keywords = QStringList() << "stream" << "i" << "callback" << "conId" << "alignas" << "alignof" << "and" << "and_eq" << "asm" << "atomic_cancel" << "atomic_commit" << "atomic_noexcept" << "auto" << "bitand" << "bitor" << "bool" << "break" << "case" << "catch" << "char" << "char8_t" << "char16_t" << "char32_t" << "class" << "compl" << "concept" << "const" << "consteval" << "constexpr" << "constinit" << "const_cast" << "continue" << "co_await" << "co_return" << "co_yield" << "decltype" << "default" << "delete" << "do" << "double" << "dynamic_cast" << "else" << "enum" << "explicit" << "export" << "extern" << "false" << "float" << "for" << "friend" << "goto" << "if" << "inline" << "int" << "long" << "mutable" << "namespace" << "new" << "noexcept" << "not" << "not_eq" << "nullptr" << "operator" << "or" << "or_eq" << "private" << "protected" << "public" << "reflexpr" << "register" << "reinterpret_cast" << "requires" << "return" << "short" << "signed" << "sizeof" << "static" << "static_assert" << "static_cast" << "struct" << "switch" << "synchronized" << "template" << "this" << "thread_local" << "throw" << "true" << "try" << "typedef" << "typeid" << "typename" << "union" << "unsigned" << "using" << "virtual" << "void" << "volatile" << "wchar_t" << "while" << "xor" << "xor_eq";
 #define VECTOR_ID "481674261"
 
+#include <QtCore>
+
 QString prepareName(QString prefix, QString raw)
 {
     QString name = prefix;
@@ -31,20 +33,48 @@ QString prepareName(QString prefix, QString raw)
     return name;
 }
 
-void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QString replace)
+void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix, bool signature, QString replace)
 {
-    QString input = p.type.split("?")[0].toLower();
+    QString input = p.type.split("?").last().toLower();
     QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
-    if (!signature) source << "    ";
+    if (!signature) {
+        if (input != "true") {
+            source << "    ";
+            if (p.type.contains('?')) {
+                qint32 parsed = p.type.split("?")[0].split(".")[1].toInt();
+                source << "if (obj[\"flags\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
+            }
+        }
+    }
     else source << "(void*) &";
-    if (input == "int") {
+    if (input == "true") {
+        if (signature) {
+            source << "0";
+            return;
+        }
+    }
+    else if (input == "int") {
         source << "writeInt32";
+        if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "#" || input == "uint") {
         source << "writeUInt32";
         if (signature) return;
-        source << "(stream, " << dest << ", callback);" << endl;
+        if (input == "#") {
+            source << "(stream, " << endl;
+            for (qint32 i = 0; i < params.size(); ++i) {
+                PARAM pi = params[i];
+                if (!pi.type.contains('?')) continue;
+                source << "            (!obj[\"" << pi.name << "\"].isNull()";
+                qint32 parsed = pi.type.split("?")[0].split(".")[1].toInt();
+                if (parsed) source << " << " << QString::number(parsed);
+                source << ") | " << endl;
+            }
+            source << "        0, callback);" << endl;
+        } else {
+            source << "(stream, " << dest << ", callback);" << endl;
+        }
     }
     else if (input == "long") {
         source << "writeInt64";
@@ -100,28 +130,42 @@ void writeParam(QTextStream &source, PARAM p, QString prefix, bool signature, QS
         source << "writeVector";
         if (signature) return;
         source << "(stream, " << dest << ", ";
-        QString type = p.type.split("?")[0];
+        QString type = p.type.split("?").last();
         type.remove(0, 7);
         type.chop(1);
         PARAM param = {"item", type};
-        writeParam(source, param, prefix, true);
+        writeParam(source, params, param, prefix, true);
         source << ");" << endl;
     }
     else {
-        source << "write" << prepareName(prefix, p.type.split("?")[0]);
+        source << "write" << prepareName(prefix, p.type.split("?").last());
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
 }
 
-void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QString replace)
+void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix, bool signature, QString replace)
 {
-    QString input = p.type.split("?")[0].toLower();
+    QString input = p.type.split("?").last().toLower();
     QString dest = replace.isEmpty() ? "obj[\"" + p.name + "\"]" : replace;
-    if (!signature) source << "    ";
+    if (!signature) {
+        source << "    ";
+        if (p.type.contains('?')) {
+            qint32 parsed = p.type.split("?")[0].split(".")[1].toInt();
+            source << "if (obj[\"flags\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
+        }
+    }
     else source << "(void*) &";
-    if (input == "int") {
+    if (input == "true") {
+        if (signature) {
+            source << "0";
+            return;
+        }
+        source << dest << " = true;" << endl;
+    }
+    else if (input == "int") {
         source << "readInt32";
+        if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "#" || input == "uint") {
@@ -183,15 +227,15 @@ void readParam(QTextStream &source, PARAM p, QString prefix, bool signature, QSt
         source << "readVector";
         if (signature) return;
         source << "(stream, " << dest << ", ";
-        QString type = p.type.split("?")[0];
+        QString type = p.type.split("?").last();
         type.remove(0, 7);
         type.chop(1);
         PARAM param = {"item", type};
-        readParam(source, param, prefix, true);
+        readParam(source, params, param, prefix, true);
         source << ");" << endl;
     }
     else {
-        source << "read" << prepareName(prefix, p.type.split("?")[0]);
+        source << "read" << prepareName(prefix, p.type.split("?").last());
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
