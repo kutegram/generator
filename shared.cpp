@@ -1,7 +1,7 @@
 #include "shared.h"
 
 QStringList flagTypes = QStringList() << "bool" << "qint32" << "quint32" << "qint64" << "double";
-QStringList keywords = QStringList() << "stream" << "i" << "callback" << "conId" << "alignas" << "alignof" << "and" << "and_eq" << "asm" << "atomic_cancel" << "atomic_commit" << "atomic_noexcept" << "auto" << "bitand" << "bitor" << "bool" << "break" << "case" << "catch" << "char" << "char8_t" << "char16_t" << "char32_t" << "class" << "compl" << "concept" << "const" << "consteval" << "constexpr" << "constinit" << "const_cast" << "continue" << "co_await" << "co_return" << "co_yield" << "decltype" << "default" << "delete" << "do" << "double" << "dynamic_cast" << "else" << "enum" << "explicit" << "export" << "extern" << "false" << "float" << "for" << "friend" << "goto" << "if" << "inline" << "int" << "long" << "mutable" << "namespace" << "new" << "noexcept" << "not" << "not_eq" << "nullptr" << "operator" << "or" << "or_eq" << "private" << "protected" << "public" << "reflexpr" << "register" << "reinterpret_cast" << "requires" << "return" << "short" << "signed" << "sizeof" << "static" << "static_assert" << "static_cast" << "struct" << "switch" << "synchronized" << "template" << "this" << "thread_local" << "throw" << "true" << "try" << "typedef" << "typeid" << "typename" << "union" << "unsigned" << "using" << "virtual" << "void" << "volatile" << "wchar_t" << "while" << "xor" << "xor_eq";
+QStringList keywords = QStringList() << "R" << "W" << "stream" << "i" << "callback" << "conId" << "alignas" << "alignof" << "and" << "and_eq" << "asm" << "atomic_cancel" << "atomic_commit" << "atomic_noexcept" << "auto" << "bitand" << "bitor" << "bool" << "break" << "case" << "catch" << "char" << "char8_t" << "char16_t" << "char32_t" << "class" << "compl" << "concept" << "const" << "consteval" << "constexpr" << "constinit" << "const_cast" << "continue" << "co_await" << "co_return" << "co_yield" << "decltype" << "default" << "delete" << "do" << "double" << "dynamic_cast" << "else" << "enum" << "explicit" << "export" << "extern" << "false" << "float" << "for" << "friend" << "goto" << "if" << "inline" << "int" << "long" << "mutable" << "namespace" << "new" << "noexcept" << "not" << "not_eq" << "nullptr" << "operator" << "or" << "or_eq" << "private" << "protected" << "public" << "reflexpr" << "register" << "reinterpret_cast" << "requires" << "return" << "short" << "signed" << "sizeof" << "static" << "static_assert" << "static_cast" << "struct" << "switch" << "synchronized" << "template" << "this" << "thread_local" << "throw" << "true" << "try" << "typedef" << "typeid" << "typename" << "union" << "unsigned" << "using" << "virtual" << "void" << "volatile" << "wchar_t" << "while" << "xor" << "xor_eq";
 #define VECTOR_ID "481674261"
 
 #include <QtCore>
@@ -111,12 +111,19 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
-    else if (input == "!x" || input == "x" || input == "object") {
+    else if (input == "!x" || input == "x") {
+        if (signature) {
+            source << "W";
+            return;
+        }
+        source << "(*W)(stream, " << dest << ", callback);" << endl;
+    }
+    else if (input == "object") {
         if (signature) {
             source << "0";
             return;
         }
-        source << "//Unsupported. (x, !x, object)" << endl;
+        source << "//Unsupported. (object)" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {
@@ -208,12 +215,19 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
-    else if (input == "!x" || input == "x" || input == "object") {
+    else if (input == "!x" || input == "x") {
+        if (signature) {
+            source << "R";
+            return;
+        }
+        source << "(*R)(stream, " << dest << ", callback);" << endl;
+    }
+    else if (input == "object") {
         if (signature) {
             source << "0";
             return;
         }
-        source << "//Unsupported. (x, !x, object)" << endl;
+        source << "//Unsupported. (object)" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {

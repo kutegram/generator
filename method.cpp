@@ -4,9 +4,12 @@
 
 void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m)
 {
+    if (m.type == "X") header << "template <READ_METHOD R, WRITE_METHOD W> ";
     header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+    if (m.type == "X") header << "template <READ_METHOD R, WRITE_METHOD W> ";
     header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
 
+    if (m.type == "X") source << "template <READ_METHOD R, WRITE_METHOD W> ";
     source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
@@ -23,6 +26,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "}" << endl;
     source << endl;
 
+    if (m.type == "X") source << "template <READ_METHOD R, WRITE_METHOD W> ";
     source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     source << "{" << endl;
 
