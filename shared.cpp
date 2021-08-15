@@ -120,17 +120,17 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
     }
     else if (input == "object") {
         if (signature) {
-            source << "0";
+            source << "W";
             return;
         }
-        source << "//Unsupported. (object)" << endl;
+        source << "if (W) (*W)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {
             source << "0";
             return;
         }
-        source << "//Unsupported. (httpwait)" << endl;
+        //source << "//Unsupported. (httpwait)" << endl;
     }
     else if (input.startsWith("vector<") && input.endsWith(">")) {
         //writeVector(source, p, prefix);
@@ -146,6 +146,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
     }
     else {
         source << "write" << prepareName(prefix, p.type.split("?").last());
+        if (input.replace("%", "") == "message" && prefix.toLower() == "mt") source << "<R, W>";
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }
@@ -224,17 +225,17 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
     }
     else if (input == "object") {
         if (signature) {
-            source << "0";
+            source << "R";
             return;
         }
-        source << "//Unsupported. (object)" << endl;
+        source << "if (R) (*R)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {
             source << "0";
             return;
         }
-        source << "//Unsupported. (httpwait)" << endl;
+        //source << "//Unsupported. (httpwait)" << endl;
     }
     else if (input.startsWith("vector<") && input.endsWith(">")) {
         //readVector(source, p, prefix);
@@ -250,6 +251,7 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
     }
     else {
         source << "read" << prepareName(prefix, p.type.split("?").last());
+        if (input.replace("%", "") == "message" && prefix.toLower() == "mt") source << "<R, W>";
         if (signature) return;
         source << "(stream, " << dest << ", callback);" << endl;
     }

@@ -73,13 +73,25 @@ void generate(QString jsonPath, QString prefix, qint32 layer)
     writeEnum(header, schema, prefix);
 
     for (qint32 i = 0; i < interfaces.size(); ++i) {
-        writeInterface(header, source, schema, prefix, interfaces[i]);
+        writeInterface(header, source, schema, prefix, interfaces[i], true);
     }
 
     header << endl;
 
     for (qint32 i = 0; i < schema.methods.size(); ++i) {
-        writeMethod(header, source, schema, prefix, schema.methods[i]);
+        writeMethod(header, source, schema, prefix, schema.methods[i], true);
+    }
+
+    header << endl;
+
+    for (qint32 i = 0; i < interfaces.size(); ++i) {
+        writeInterface(header, source, schema, prefix, interfaces[i], false);
+    }
+
+    header << endl;
+
+    for (qint32 i = 0; i < schema.methods.size(); ++i) {
+        writeMethod(header, source, schema, prefix, schema.methods[i], false);
     }
 
     header << endl;
