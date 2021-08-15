@@ -23,7 +23,7 @@ void writeInterfaceHeader(QTextStream &header, SCHEMA &schema, QString prefix, Q
 
     header << "    TelegramObject obj;" << endl;
     header << "    QVariant conId;" << endl;
-    if (interface != "Message") header << "    readInt32(stream, conId, callback);" << endl;
+    if (interface.replace("%", "") != "Message" || prefix.toLower() != "mt") header << "    readInt32(stream, conId, callback);" << endl;
     header << "    switch (conId.toInt()) {" << endl;
     for (qint32 i = 0; i < predicts.size(); ++i) {
         CONSTRUCTOR c = predicts[i];
@@ -52,7 +52,7 @@ void writeInterfaceHeader(QTextStream &header, SCHEMA &schema, QString prefix, Q
         header << "    case " << QString::number(c.id) << ":" << endl;
         PARAM id = {"_", "int"};
         header << "    ";
-        if (interface != "Message") writeParam(header, c.params, id, prefix);
+        if (interface.replace("%", "") != "Message" || prefix.toLower() != "mt") writeParam(header, c.params, id, prefix);
         for (qint32 j = 0; j < c.params.size(); ++j) {
             if (c.params[j].type.split("?").last().toLower() != "true") header << "    ";
             writeParam(header, c.params, c.params[j], prefix);
@@ -91,7 +91,7 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
 
     source << "    TelegramObject obj;" << endl;
     source << "    QVariant conId;" << endl;
-    if (interface != "Message") source << "    readInt32(stream, conId, callback);" << endl;
+    if (interface.replace("%", "") != "Message" || prefix.toLower() != "mt") source << "    readInt32(stream, conId, callback);" << endl;
     source << "    switch (conId.toInt()) {" << endl;
     for (qint32 i = 0; i < predicts.size(); ++i) {
         CONSTRUCTOR c = predicts[i];
@@ -119,7 +119,7 @@ void writeInterface(QTextStream& header, QTextStream& source, SCHEMA& schema, QS
         source << "    case " << QString::number(c.id) << ":" << endl;
         PARAM id = {"_", "int"};
         source << "    ";
-        if (interface != "Message") writeParam(source, c.params, id, prefix);
+        if (interface.replace("%", "") != "Message" || prefix.toLower() != "mt") writeParam(source, c.params, id, prefix);
         for (qint32 j = 0; j < c.params.size(); ++j) {
             if (c.params[j].type.split("?").last().toLower() != "true") source << "    ";
             writeParam(source, c.params, c.params[j], prefix);
