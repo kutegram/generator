@@ -62,7 +62,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
         source << "writeUInt32";
         if (signature) return;
         if (input == "#") {
-            source << "(stream, " << endl;
+            source << "(stream, obj[\"flags\"] = (" << endl;
             for (qint32 i = 0; i < params.size(); ++i) {
                 PARAM pi = params[i];
                 if (!pi.type.contains('?')) continue;
@@ -71,7 +71,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
                 if (parsed) source << " << " << QString::number(parsed);
                 source << ") | " << endl;
             }
-            source << "        0, callback);" << endl;
+            source << "        0), callback);" << endl;
         } else {
             source << "(stream, " << dest << ", callback);" << endl;
         }
