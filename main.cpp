@@ -16,6 +16,7 @@ void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
     header << "namespace " << prefix << "Type {" << endl;
     header << "enum Types" << endl;
     header << "{" << endl;
+    header << "    Unknown = 0," << endl;
 
     for (qint32 i = 0; i < schema.constructors.size(); ++i) {
         header << "    " << prepareName("", schema.constructors[i].predicate) << " = " << QString::number(schema.constructors[i].id) << "," << endl;
