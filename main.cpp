@@ -107,6 +107,6 @@ void generate(QString jsonPath, QString prefix, qint32 layer)
 int main(int argc, char *argv[])
 {
     generate(":/mtproto.json", "MT", 0);
-    generate(":/telegram.json", "TL", 121);
+    generate(":/telegram.json", "TL", 133);
     qDebug("Finished.");
 }
