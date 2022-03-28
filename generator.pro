@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     shared.cpp \
     method.cpp \
     constructor.cpp \
-    schema.cpp
+    schema.cpp \
+    generator.cpp
 
 RESOURCES += \
     resources.qrc
@@ -33,4 +34,5 @@ HEADERS += \
     shared.h \
     method.h \
     constructor.h \
-    schema.h
+    schema.h \
+    generator.h

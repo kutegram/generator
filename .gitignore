@@ -1,1 +1,12 @@
 ﻿*.user
+*.exe
+*.o
+debug
+Makefile
+Makefile.Debug
+Makefile.Release
+release
+mtschema.cpp
+mtschema.h
+tlschema.cpp
+tlschema.h

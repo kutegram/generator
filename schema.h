@@ -2,7 +2,7 @@
 #define SCHEMA_H
 
 #include <QStringList>
-#include <qt-json/json.h>
+#include <json.h>
 
 using namespace QtJson;
 
