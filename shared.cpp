@@ -66,7 +66,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
             for (qint32 i = 0; i < params.size(); ++i) {
                 PARAM pi = params[i];
                 if (!pi.type.contains('?')) continue;
-                source << "            (!obj[\"" << pi.name << "\"].toBool()";
+                source << "            (!obj[\"" << pi.name << "\"].isNull()";
                 qint32 parsed = pi.type.split("?")[0].split(".")[1].toInt();
                 if (parsed) source << " << " << QString::number(parsed);
                 source << ") | " << endl;
