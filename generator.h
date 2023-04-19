@@ -13,6 +13,6 @@
 #include "method.h"
 
 void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix);
-void generate(QString jsonPath, QString prefix, qint32 layer);
+void generate(QString jsonPath, QString prefix, qint32 layer, QString streamHeaderPath);
 
 #endif // GENERATOR_H

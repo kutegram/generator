@@ -21,6 +21,7 @@ void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METH
     header << "    switch (conId.toInt()) {" << endl;
     header << "    case " << QString::number(m.id) << ":" << endl;
     PARAM returnParam = {"i", m.type};
+    header << "    ";
     readParam(header, m.params, returnParam, prefix, false, "i");
     header << "    break;" << endl;
 
@@ -71,6 +72,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "    switch (conId.toInt()) {" << endl;
     source << "    case " << QString::number(m.id) << ":" << endl;
     PARAM returnParam = {"i", m.type};
+    source << "    ";
     readParam(source, m.params, returnParam, prefix, false, "i");
     source << "    break;" << endl;
 

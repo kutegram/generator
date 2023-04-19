@@ -22,7 +22,7 @@ void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
     header << endl;
 }
 
-void generate(QString jsonPath, QString prefix, qint32 layer)
+void generate(QString jsonPath, QString prefix, qint32 layer, QString streamHeaderPath)
 {
     QFile jsonFile(jsonPath);
     if (!jsonFile.open(QFile::ReadOnly)) return;
@@ -44,7 +44,7 @@ void generate(QString jsonPath, QString prefix, qint32 layer)
 
     header << "//Generated code." << endl;
     header << endl;
-    header << "#include \"telegramstream.h\"" << endl;
+    header << "#include \"" << streamHeaderPath << "\"" << endl;
     header << endl;
 
     source << "//Generated code." << endl;
