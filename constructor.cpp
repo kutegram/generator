@@ -18,7 +18,7 @@ void writeInterfaceHeader(QTextStream &header, SCHEMA &schema, QString prefix, Q
     }
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i, void* callback = 0)" << endl;
+    header << "void read" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    TelegramObject obj;" << endl;
@@ -42,7 +42,7 @@ void writeInterfaceHeader(QTextStream &header, SCHEMA &schema, QString prefix, Q
     header << endl;
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i, void* callback = 0)" << endl;
+    header << "void write" << prepareName(prefix, interface) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    TelegramObject obj = i.toMap();" << endl;

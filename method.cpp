@@ -13,7 +13,7 @@ void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METH
     }
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0)" << endl;
+    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    QVariant conId;" << endl;
@@ -31,7 +31,7 @@ void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METH
     header << endl;
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0)" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    TelegramObject obj = i.toMap();" << endl;
