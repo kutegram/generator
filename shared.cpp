@@ -116,14 +116,14 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
             source << "W";
             return;
         }
-        source << "if (W) (*W)(stream, " << dest << ", callback);" << endl;
+        source << "(*W)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "object") {
         if (signature) {
             source << "W";
             return;
         }
-        source << "if (W) (*W)(stream, " << dest << ", callback);" << endl;
+        source << "(*W)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {
@@ -221,14 +221,14 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
             source << "R";
             return;
         }
-        source << "if (R) (*R)(stream, " << dest << ", callback);" << endl;
+        source << "(*R)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "object") {
         if (signature) {
             source << "R";
             return;
         }
-        source << "if (R) (*R)(stream, " << dest << ", callback);" << endl;
+        source << "(*R)(stream, " << dest << ", callback);" << endl;
     }
     else if (input == "httpwait") {
         if (signature) {
