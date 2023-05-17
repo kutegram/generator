@@ -42,7 +42,7 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
             source << "    ";
             if (p.type.contains('?')) {
                 qint32 parsed = p.type.split("?")[0].split(".")[1].toInt();
-                source << "if (obj[\"flags\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
+                source << "if (obj[\"" << p.type.split(".")[0] << "\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
             }
         }
     }
@@ -62,10 +62,11 @@ void writeParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefi
         source << "writeUInt32";
         if (signature) return;
         if (input == "#") {
-            source << "(stream, obj[\"flags\"] = (" << endl;
+            source << "(stream, obj[\"" << p.name << "\"] = (" << endl;
             for (qint32 i = 0; i < params.size(); ++i) {
                 PARAM pi = params[i];
                 if (!pi.type.contains('?')) continue;
+                if (pi.type.split(".")[0] != p.name) continue;
                 source << "            (!obj[\"" << pi.name << "\"].isNull()";
                 qint32 parsed = pi.type.split("?")[0].split(".")[1].toInt();
                 if (parsed) source << " << " << QString::number(parsed);
@@ -160,7 +161,7 @@ void readParam(QTextStream &source, QList<PARAM> params, PARAM p, QString prefix
         source << "    ";
         if (p.type.contains('?')) {
             qint32 parsed = p.type.split("?")[0].split(".")[1].toInt();
-            source << "if (obj[\"flags\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
+            source << "if (obj[\"" << p.type.split(".")[0] << "\"].toUInt() & " << QString::number(qPow(2, parsed), 'g', 11) << ") ";
         }
     }
     else source << "(void*) &";
