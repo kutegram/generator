@@ -29,7 +29,9 @@ RESOURCES += \
 
 OTHER_FILES += \
     mtproto.json \
-    telegram.json
+    api.json \
+    mtproto.tl \
+    api.tl
 
 HEADERS += \
     shared.h \
