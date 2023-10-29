@@ -3,9 +3,7 @@
 
 #include <QList>
 #include <QFile>
-#include <QTextStream>
 #include <QStringList>
-#include <json.h>
 
 #include "schema.h"
 #include "shared.h"
@@ -13,6 +11,6 @@
 #include "method.h"
 
 void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix);
-void generate(QString jsonPath, QString prefix, qint32 layer, QString streamHeaderPath);
+void generate(QString filePath, QString prefix, qint32 layer, QString streamHeaderPath);
 
 #endif // GENERATOR_H

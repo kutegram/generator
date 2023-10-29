@@ -20,20 +20,13 @@ struct CONSTRUCTOR
     QString type;
 };
 
-struct METHOD
-{
-    qint32 id;
-    QString method;
-    QList<PARAM> params;
-    QString type;
-};
-
 struct SCHEMA
 {
     QList<CONSTRUCTOR> constructors;
-    QList<METHOD> methods;
+    QList<CONSTRUCTOR> methods;
 };
 
-SCHEMA deserialize(JsonObject json);
+SCHEMA deserializeJSON(QString jsonText);
+SCHEMA deserializeTL(QString tlText);
 
 #endif // SCHEMA_H

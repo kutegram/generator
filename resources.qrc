@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>telegram.json</file>
+        <file>api.json</file>
+        <file>api.tl</file>
         <file>mtproto.json</file>
+        <file>mtproto.tl</file>
     </qresource>
 </RCC>

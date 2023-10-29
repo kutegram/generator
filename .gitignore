@@ -10,3 +10,4 @@ mtschema.cpp
 mtschema.h
 tlschema.cpp
 tlschema.h
+*.pro.user*

@@ -1,7 +1,5 @@
 #include "generator.h"
 
-using namespace QtJson;
-
 void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
 {
     header << "namespace " << prefix << "Type {" << endl;
@@ -10,11 +8,17 @@ void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
     header << "    Unknown = 0," << endl;
 
     for (qint32 i = 0; i < schema.constructors.size(); ++i) {
-        header << "    " << prepareName("", schema.constructors[i].predicate) << " = " << QString::number(schema.constructors[i].id) << "," << endl;
+        QString hexId = QString::number((quint32) schema.constructors[i].id, 16);
+        while (hexId.length() < 8)
+            hexId.prepend("0");
+        header << "    " << prepareName("", schema.constructors[i].predicate) << " = " << QString::number(schema.constructors[i].id) << ", //0x" << hexId << endl;
     }
 
     for (qint32 i = 0; i < schema.methods.size(); ++i) {
-        header << "    " << prepareName("", schema.methods[i].method) << "Method = " << QString::number(schema.methods[i].id) << "," << endl;
+        QString hexId = QString::number((quint32) schema.methods[i].id, 16);
+        while (hexId.length() < 8)
+            hexId.prepend("0");
+        header << "    " << prepareName("", schema.methods[i].predicate) << "Method = " << QString::number(schema.methods[i].id) << ", //0x" << hexId << endl;
     }
 
     header << "};" << endl;
@@ -22,10 +26,10 @@ void writeEnum(QTextStream& header, SCHEMA& schema, QString prefix)
     header << endl;
 }
 
-void generate(QString jsonPath, QString prefix, qint32 layer, QString streamHeaderPath)
+void generate(QString filePath, QString prefix, qint32 layer, QString streamHeaderPath)
 {
-    QFile jsonFile(jsonPath);
-    if (!jsonFile.open(QFile::ReadOnly)) return;
+    QFile schemaFile(filePath);
+    if (!schemaFile.open(QFile::ReadOnly)) return;
 
     QFile headerFile(prefix.toLower() + "schema.h");
     if (!headerFile.open(QFile::WriteOnly)) return;
@@ -35,8 +39,14 @@ void generate(QString jsonPath, QString prefix, qint32 layer, QString streamHead
     if (!sourceFile.open(QFile::WriteOnly)) return;
     QTextStream source(&sourceFile);
 
-    SCHEMA schema = deserialize(parse(QTextStream(&jsonFile).readAll()).toMap());
-    jsonFile.close();
+    QString schemaText = QString::fromUtf8(schemaFile.readAll());
+    schemaFile.close();
+
+    SCHEMA schema;
+    if (filePath.endsWith("json"))
+        schema = deserializeJSON(schemaText);
+    else
+        schema = deserializeTL(schemaText);
 
     header << "#ifndef " << prefix.toUpper() << "SCHEMA_H" << endl;
     header << "#define " << prefix.toUpper() << "SCHEMA_H" << endl;

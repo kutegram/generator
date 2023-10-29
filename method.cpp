@@ -2,18 +2,18 @@
 
 #include "shared.h"
 
-void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METHOD m, bool forward)
+void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, CONSTRUCTOR m, bool forward)
 {
     if (forward) {
         header << "template <READ_METHOD R, WRITE_METHOD W> ";
-        header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+        header << "void read" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
         header << "template <READ_METHOD R, WRITE_METHOD W> ";
-        header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
+        header << "void write" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
         return;
     }
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
+    header << "void read" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    QVariant conId;" << endl;
@@ -31,7 +31,7 @@ void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METH
     header << endl;
 
     header << "template <READ_METHOD R, WRITE_METHOD W> ";
-    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     header << "{" << endl;
 
     header << "    TelegramObject obj = i.toMap();" << endl;
@@ -53,7 +53,7 @@ void writeMethodHeader(QTextStream& header, SCHEMA& schema, QString prefix, METH
     header << endl;
 }
 
-void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, METHOD m, bool forward)
+void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QString prefix, CONSTRUCTOR m, bool forward)
 {
     if (m.type == "X") {
         writeMethodHeader(header, schema, prefix, m, forward);
@@ -61,10 +61,10 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     }
     if (forward) return;
 
-    header << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
-    header << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
+    header << "void read" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant &i, void* callback = 0);" << endl;
+    header << "void write" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant i, void* callback = 0);" << endl;
 
-    source << "void read" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
+    source << "void read" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant &i, void* callback)" << endl;
     source << "{" << endl;
 
     source << "    QVariant conId;" << endl;
@@ -81,7 +81,7 @@ void writeMethod(QTextStream& header, QTextStream& source, SCHEMA& schema, QStri
     source << "}" << endl;
     source << endl;
 
-    source << "void write" << prepareName(prefix + "Method", m.method) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
+    source << "void write" << prepareName(prefix + "Method", m.predicate) << "(TelegramStream &stream, QVariant i, void* callback)" << endl;
     source << "{" << endl;
 
     source << "    TelegramObject obj = i.toMap();" << endl;

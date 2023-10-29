@@ -8,8 +8,13 @@ QStringList keywords = QStringList() << "R" << "W" << "stream" << "i" << "callba
 
 QString prepareName(QString prefix, QString raw)
 {
+    if (raw.isEmpty()) {
+        return "";
+    }
+
     QString name = prefix;
     raw = raw.replace("%", "");
+
     QStringList split = raw.split(" ", QString::SkipEmptyParts);
     split = split[0].split("_", QString::SkipEmptyParts);
     for (qint32 i = 0; i < split.size(); ++i) {
@@ -20,6 +25,7 @@ QString prepareName(QString prefix, QString raw)
             name += item;
         }
     }
+
     split = name.split(".", QString::SkipEmptyParts);
     name.clear();
     for (qint32 i = 0; i < split.size(); ++i) {
@@ -30,6 +36,7 @@ QString prepareName(QString prefix, QString raw)
             name += item;
         }
     }
+
     return name;
 }
 

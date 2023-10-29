@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     method.cpp \
     constructor.cpp \
     schema.cpp \
-    generator.cpp
+    generator.cpp \
+    crc32.cpp
 
 RESOURCES += \
     resources.qrc
@@ -35,4 +36,5 @@ HEADERS += \
     method.h \
     constructor.h \
     schema.h \
-    generator.h
+    generator.h \
+    crc32.h
