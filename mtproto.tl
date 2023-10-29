@@ -69,7 +69,7 @@ msg_new_detailed_info#809db6df answer_msg_id:long bytes:int status:int = MsgDeta
 
 msg_resend_req#7d861a08 msg_ids:Vector<long> = MsgResendReq;
 
-rpc_result#f35c6d01 req_msg_id:long result:Object = RpcResult; // parsed manually
+//rpc_result#f35c6d01 req_msg_id:long result:Object = RpcResult; // parsed manually
 
 rpc_error#2144ca19 error_code:int error_message:string = RpcError;
 
@@ -87,10 +87,10 @@ destroy_session_none#62d350c9 session_id:long = DestroySessionRes;
 
 new_session_created#9ec20908 first_msg_id:long unique_id:long server_salt:long = NewSession;
 
-message msg_id:long seqno:int bytes:int body:Object = Message; // parsed manually
-msg_container#73f1f8dc messages:vector<message> = MessageContainer; // parsed manually
-msg_copy#e06046b2 orig_message:Message = MessageCopy; // parsed manually, not used - use msg_container
-gzip_packed#3072cfa1 packed_data:string = Object; // parsed manually
+//message msg_id:long seqno:int bytes:int body:Object = Message; // parsed manually
+//msg_container#73f1f8dc messages:vector<message> = MessageContainer; // parsed manually
+//msg_copy#e06046b2 orig_message:Message = MessageCopy; // parsed manually, not used - use msg_container
+//gzip_packed#3072cfa1 packed_data:string = Object; // parsed manually
 
 http_wait#9299359f max_delay:int wait_after:int max_wait:int = HttpWait;
 
